@@ -1,0 +1,27 @@
+# This workflow will run daily at 08:00 UTC to check for success completion anniversaries to celebrate
+
+name: Success completion anniversaries
+
+on:
+  workflow_dispatch: # Allow to trigger actions manually, for testing purpose
+  schedule:
+    - cron: '0 8 * * *' # Daily, at 10 AM in summer & 9 AM in winter, in Europe/Paris timezone
+
+env:
+  STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
+  STEAM_USER_ID: ${{ secrets.STEAM_USER_ID }}
+  DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+  DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+  TZ: ${{ vars.TZ }}
+
+jobs:
+  anniversaries:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+    - name: Check for steam success completion anniversaries to celebrate
+      run: ruby steam_success_anniversary_bot.rb
