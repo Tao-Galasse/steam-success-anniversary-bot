@@ -12,15 +12,15 @@ def fetch_game_ids
 end
 
 def completed_games(game_ids)
-  game_ids.map { |game_id| fetch_game_achievements(game_id) }.compact # games with achievements
-          .select { |game| game['achievements'].all? { _1['achieved'] == 1 } } # games with 100% completion
+  game_ids.map { |game_id| fetch_game_achievements(game_id) } # games with achievements
+          .select { |game| game['achievements']&.all? { _1['achieved'] == 1 } } # games with 100% completion
           .map { |game| { name: game['gameName'], date: completion_date(game) } } # format the result
 end
 
 def fetch_game_achievements(game_id)
   Steam::UserStats.player_achievements(game_id, @user_id)
 rescue Steam::SteamError => _e # some games do not support achievements: we ignore them
-  nil
+  {}
 end
 
 def completion_date(game)
