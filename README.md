@@ -32,7 +32,7 @@ You can also update the message sent to your Discord channel in the `steam_succe
 
 ### Locally
 
-- Install Ruby 3.3.4 (should also work with most of Ruby >= 2.7 versions, but I didn't try them myself. If you want to try another version, update the `.ruby-version` file, as well as the `Gemfile`).
+- Install Ruby 3.4.4.
 - Add a `.env` file following the format given in `.env.example`.
 - Install dependencies with `bundle install` thanks to [bundler](https://bundler.io/). 
 - Run `ruby steam_success_anniversary_bot.rb`!

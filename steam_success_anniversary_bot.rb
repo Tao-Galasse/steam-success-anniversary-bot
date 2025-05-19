@@ -35,11 +35,20 @@ def my_anniversaries(completed_games)
   end
 end
 
-def anniversary_message(game, user_name)
+# Send a message on Discord in an embed with all required data on the anniversary
+def send_discord_message(game, user_name)
   age = Date.today.year - game[:date].year
   years = age == 1 ? 'an' : 'ans'
 
-  "Aujourd'hui, nous célébrons la complétion de #{game[:name]} par #{user_name}, il y a #{age} #{years} !"
+  @discord_bot.send_message(
+    ENV['DISCORD_CHANNEL_ID'],
+    '',
+    false,
+    Discordrb::Webhooks::Embed.new(
+      title: "Aujourd'hui, nous célébrons la complétion de #{game[:name]} par #{user_name} !",
+      description: "Il y a #{age} #{years} :birthday:"
+    )
+  )
 end
 
 @user_id = ENV.fetch('STEAM_USER_ID')
@@ -50,10 +59,7 @@ anniversaries = my_anniversaries(completed_games)
 return if anniversaries.empty?
 
 # If we have at least one anniversary to celebrate, we want to say it on Discord!
-discord_bot = Discordrb::Bot.new(token: ENV['DISCORD_TOKEN'])
+@discord_bot = Discordrb::Bot.new(token: ENV['DISCORD_TOKEN'])
 user_name = Steam::User.summary(@user_id)['personaname']
 
-anniversaries.each do |game|
-  message = anniversary_message(game, user_name)
-  discord_bot.send_message(ENV['DISCORD_CHANNEL_ID'], message)
-end
+anniversaries.each { |game| send_discord_message(game, user_name) }
