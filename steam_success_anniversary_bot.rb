@@ -8,13 +8,16 @@ require 'steam-api'
 require 'tzinfo'
 
 def fetch_game_ids
-  Steam::Player.owned_games(@user_id)['games'].map { _1['appid'] }
+  Steam::Player.owned_games(@user_id)['games'].map { it['appid'] }
 end
 
 def completed_games(game_ids)
-  game_ids.map { |game_id| fetch_game_achievements(game_id) } # games with achievements
-          .select { |game| game['achievements']&.all? { _1['achieved'] == 1 } } # games with 100% completion
-          .map { |game| { name: game['gameName'], date: completion_date(game) } } # format the result
+  game_ids.filter_map do |game_id|
+    game = fetch_game_achievements(game_id)
+    next unless game['achievements']&.all? { it['achieved'] == 1 } # only keep games with 100% completion
+
+    { id: game_id, name: game['gameName'], date: completion_date(game) } # format the result
+  end
 end
 
 def fetch_game_achievements(game_id)
@@ -24,7 +27,7 @@ rescue Steam::SteamError => _e # some games do not support achievements: we igno
 end
 
 def completion_date(game)
-  epoch_time = game['achievements'].map { _1['unlocktime'] }.max
+  epoch_time = game['achievements'].map { it['unlocktime'] }.max
   Time.at(epoch_time, in: @tz)
 end
 
@@ -46,9 +49,14 @@ def send_discord_message(game, user_name)
     false,
     Discordrb::Webhooks::Embed.new(
       title: "Aujourd'hui, nous célébrons la complétion de #{game[:name]} par #{user_name} !",
-      description: "Il y a #{age} #{years} :birthday:"
+      description: "Il y a #{age} #{years} :birthday:",
+      thumbnail: Discordrb::Webhooks::EmbedThumbnail.new(url: image_url(game[:id]))
     )
   )
+end
+
+def image_url(game_id)
+  "https://cdn.cloudflare.steamstatic.com/steam/apps/#{game_id}/capsule_616x353.jpg"
 end
 
 @user_id = ENV.fetch('STEAM_USER_ID')
