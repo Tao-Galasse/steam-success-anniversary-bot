@@ -40,18 +40,23 @@ end
 
 # Send a message on Discord in an embed with all required data on the anniversary
 def send_discord_message(game, user_name)
-  age = Date.today.year - game[:date].year
-  years = age == 1 ? 'an' : 'ans'
-
   @discord_bot.send_message(
     ENV['DISCORD_CHANNEL_ID'],
     '',
     false,
-    Discordrb::Webhooks::Embed.new(
-      title: "Aujourd'hui, nous célébrons la complétion de #{game[:name]} par #{user_name} !",
-      description: "Il y a #{age} #{years} :birthday:",
-      thumbnail: Discordrb::Webhooks::EmbedThumbnail.new(url: image_url(game[:id]))
-    )
+    generate_discord_embed(game, user_name)
+  )
+end
+
+def generate_discord_embed(game, user_name)
+  age = Date.today.year - game[:date].year
+  years = age == 1 ? 'an' : 'ans'
+
+  Discordrb::Webhooks::Embed.new(
+    title: "Aujourd'hui, nous célébrons la complétion de #{game[:name]} par #{user_name} !",
+    description: "Il y a #{age} #{years} :birthday:",
+    color: '#00ADEE', # official Steam color
+    thumbnail: Discordrb::Webhooks::EmbedThumbnail.new(url: image_url(game[:id]))
   )
 end
 
