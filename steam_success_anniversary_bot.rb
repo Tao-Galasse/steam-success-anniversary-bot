@@ -54,10 +54,14 @@ def generate_discord_embed(game, user_name)
 
   Discordrb::Webhooks::Embed.new(
     title: "Aujourd'hui, nous célébrons la complétion de #{game[:name]} par #{user_name} !",
-    description: "Il y a #{age} #{years} :birthday:",
+    description: "Il y a #{age} #{years} :birthday: - [Voir sur Steam](#{game_url(game[:id])})",
     color: '#00ADEE', # official Steam color
     thumbnail: Discordrb::Webhooks::EmbedThumbnail.new(url: image_url(game[:id]))
   )
+end
+
+def game_url(game_id)
+  "https://store.steampowered.com/app/#{game_id}"
 end
 
 def image_url(game_id)
