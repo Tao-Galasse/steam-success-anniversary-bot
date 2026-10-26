@@ -14,7 +14,8 @@ You will also need to set your `STEAM_USER_ID` ; you can get it on your profile,
 
 #### Timezone setup
 
-If you want to use a custom timezone, you can define your `TZ` variable in the `settings/variables/actions` section. By default, it will be Europe/Paris, as defined in the source code.
+If you want to use a custom timezone, you can define your `TZ` variable in the `settings/variables/actions` section. By default, it will be Europe/Paris, as defined in the source code.  
+The workflow runs daily at 9 AM Europe/Paris time. To change it, update the `cron` and `timezone` keys in `.github/workflows/steam_success_anniversaries.yml` (GitHub Actions variables can't be used there).
 
 #### Discord setup
 
@@ -32,7 +33,7 @@ You can also update the message sent to your Discord channel in the `steam_succe
 
 ### Locally
 
-- Install Ruby 3.4.4.
+- Install Ruby 4.0.9.
 - Add a `.env` file following the format given in `.env.example`.
 - Install dependencies with `bundle install` thanks to [bundler](https://bundler.io/). 
 - Run `ruby steam_success_anniversary_bot.rb`!

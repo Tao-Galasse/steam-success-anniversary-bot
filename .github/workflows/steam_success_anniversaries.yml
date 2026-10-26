@@ -1,11 +1,12 @@
-# This workflow will run daily at 08:00 UTC to check for success completion anniversaries to celebrate
+# This workflow will run daily at 9 AM (Europe/Paris) to check for success completion anniversaries to celebrate
 
 name: Success completion anniversaries
 
 on:
   workflow_dispatch: # Allow to trigger actions manually, for testing purpose
   schedule:
-    - cron: '0 8 * * *' # Daily, at 10 AM in summer & 9 AM in winter, in Europe/Paris timezone
+    - cron: '0 9 * * *' # Runs everyday at 9AM
+      timezone: 'Europe/Paris' # Hardcoded: `vars.TZ` can't be used in `on:`
 
 env:
   STEAM_API_KEY: ${{ secrets.STEAM_API_KEY }}
@@ -18,7 +19,7 @@ jobs:
   anniversaries:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
